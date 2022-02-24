@@ -1,7 +1,7 @@
 import requests
 import os
 import json
-import APISecret
+import APISecret #Remove this line to test
 
 #print("hello")
 
@@ -20,6 +20,8 @@ def urlGen(search, maxTweets = 10):
 
 
 def v2auth():
+    #REPLACE THIS LINE WITH BEARER TOKEN TO TEST
+    #ALSO REMOVE THE LINE "import APISecret"
     return os.environ.get("BEARER_TOKEN")
 
 def requestHeaders(token):
