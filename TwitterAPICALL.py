@@ -3,9 +3,9 @@ import os
 import json
 import APISecret
 
-print("hello")
+#print("hello")
 
-print(os.environ.get("API_KEY"))
+#print(os.environ.get("API_KEY"))
 
 
 def urlGen(search, maxTweets = 10):
@@ -28,7 +28,7 @@ def requestHeaders(token):
 def accessEndpoint(url, headers, params, next_token = None):
     params['next_token'] = next_token
     response = requests.request("GET", url, headers=headers, params=params)
-    print(os.environ.get("BEARER_TOKEN"))
+    #print(os.environ.get("BEARER_TOKEN"))
     print("Response: " + str(response.status_code))
 
     return response.json()
