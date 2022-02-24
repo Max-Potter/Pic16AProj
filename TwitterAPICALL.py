@@ -19,6 +19,7 @@ def urlGen(search, maxTweets = 10):
 
 
 def v2auth():
+    #REPLACE THIS LINE WITH BEARER TOKEN TO TEST
     return os.environ.get("BEARER_TOKEN")
 
 def requestHeaders(token):
