@@ -14,7 +14,8 @@ def urlGen(search, maxTweets = 10):
 
     query_params = {'query': search,
                     'max_results': maxTweets,
-                    'next_token': {}}
+                    'next_token': {},
+                    'tweet.fields': 'public_metrics'}
     return url, query_params
 
 
@@ -33,17 +34,23 @@ def accessEndpoint(url, headers, params, next_token = None):
 
     return response.json()
 
-def callTwitter():
+def callTwitter(search, max_results=20):
     bearer_token = v2auth()
     headers = requestHeaders(bearer_token)
-    search = "Kanye Pete"
-    max_results = 20
+    #search = "Kanye Pete"
+    #max_results = 20
     url = urlGen(search, max_results)
     json_response = accessEndpoint(url[0], headers, url[1])
     return json_response
 
 
-jsonresponse = callTwitter()
+jsonresponse = callTwitter("Kanye Pete Davidson beef", 40)
+HistDict = {}
 for item in jsonresponse["data"]:
-    print(item["text"])
+    if 'RT @' not in item["text"]:
+        HistDict[item["text"]] = 1
+        print(item["text"])
+        
 print("done")
+#print(jsonresponse)
+#print(HistDict["hey"])
