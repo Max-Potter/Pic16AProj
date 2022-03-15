@@ -9,6 +9,7 @@ class tweetCleaner():
         self.json = jsonObj
 
     def removeLinksHashtags(self):
+        pass
 
 
     def removeRepeats(self):
