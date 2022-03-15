@@ -57,12 +57,17 @@ class tweetCleaner():
 
 
 
-json = TwitterAPICALL.callTwitter("Kanye Pete Davidson beef", 100)
+#json = TwitterAPICALL.callTwitter("Kanye Pete Davidson beef", 100)
+json = TwitterAPICALL.getPastSevenDays("Kanye Pete Davidson", 100)
+#print(json)
+print(type(json))
 g = tweetCleaner(json)
-
+#for item in g.cleanedJson['data']:
+  #  print(item['text'],"DONE")
 g.prepTweets()
 for item in g.cleanedJson['data']:
-    print(item['text'],"DONE")
+    print(item['public_metrics'],"DONE")
+print(len(g.cleanedJson['data']))
 
 
 print("done")

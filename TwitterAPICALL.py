@@ -2,17 +2,27 @@ import requests
 import os
 import json
 import APISecret #Remove this line to test
+import datetime
+from datetime import datetime, timedelta
 
 #print("hello")
 
 #print(os.environ.get("API_KEY"))
 
 
-def urlGen(search, maxTweets = 10):
-    search = search + " lang:en"
+def urlGen(search, maxTweets = 10, hours_before = 0):
+    search = search + " lang:en" + " -is:retweet"
     url = "https://api.twitter.com/2/tweets/search/recent"
+    endTime = datetime.utcnow()
+    endTime = endTime - timedelta(hours = hours_before)
+    endTime = endTime - timedelta(seconds=30)
+    endTime = str(endTime)
+    endTime = endTime.replace(' ', 'T')
+    endTime = endTime + 'Z'
+    #print(endTime)
 
     query_params = {'query': search,
+                    'end_time': endTime,
                     'max_results': maxTweets,
                     'next_token': {},
                     'tweet.fields': 'public_metrics'}
@@ -36,14 +46,25 @@ def accessEndpoint(url, headers, params, next_token = None):
 
     return response.json()
 
-def callTwitter(search, max_results=20):
+def callTwitter(search, max_results=20, hours_before = 0):
     bearer_token = v2auth()
     headers = requestHeaders(bearer_token)
     #search = "Kanye Pete"
     #max_results = 20
-    url = urlGen(search, max_results)
+    url = urlGen(search, max_results, hours_before)
     json_response = accessEndpoint(url[0], headers, url[1])
     return json_response
+
+def getPastSevenDays(search, max_results = 20):
+    initJson = callTwitter(search, max_results, 0)
+    for hourVal in range(0, 168, 2):
+        newJson = callTwitter(search, max_results, hourVal)
+        for item in newJson['data']:
+            initJson['data'].append(item)
+        #finalJson = updateJson
+        #finalJson.update(callTwitter(search, max_results=max_results, hours_before = hourVal))
+    return initJson
+
 
 
 #jsonresponse = callTwitter("Kanye Pete Davidson beef", 40)
