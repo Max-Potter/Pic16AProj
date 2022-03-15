@@ -23,6 +23,8 @@ MIT License
 
 References and Acknowledgement:
 Twitter
+COMM 155 - Artificial Intelligence and New Media, Winter Quarter 2022, Prof. J. Joo, TA. Jacqueline Lam
+  - Copy_of_COMM155_W22_Week_5_CSV_format_and_NLTK.ipynb
 ...
 
 Background Source of Dataset:
