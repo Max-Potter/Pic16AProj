@@ -21,8 +21,15 @@ Scope and Limitations:
 License and Terms of Use:
 MIT License
 
-References and Acknowledgement:
-Twitter
+References and Acknowledgement: 
+a) Existing public datasets involved:
+Twitter data gathered using Twitter API
+b) Online tutorials involved:
+Text Analytics for Beginners using NLTK
+Comparing Sentiment Analysis Tools
+Sentiment Analysis Using NLTK
+c) Python packages we haven’t discussed in class involved
+NLTK (Natural Language Toolkit Library)
 COMM 155 - Artificial Intelligence and New Media, Winter Quarter 2022, Prof. J. Joo, TA. Jacqueline Lam
   - Copy_of_COMM155_W22_Week_5_CSV_format_and_NLTK.ipynb
 ...
