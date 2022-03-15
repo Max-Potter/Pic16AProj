@@ -2,40 +2,65 @@ import TwitterAPICALL
 import nltk
 from nltk.corpus import stopwords
 import numpy as np
+import copy
 
 
 class tweetCleaner():
     def __init__(self, jsonObj):
         self.json = jsonObj
+        self.cleanedJson = copy.copy(jsonObj)
 
-    def removeLinksHashtags(self):
-        pass
+    def lowerTweets(self):
+        for item in self.cleanedJson['data']:
+            item['text'] = item['text'].lower()
 
+    def removeLinks(self):
+        for item in self.cleanedJson['data']:
+            tweetText = item['text']
+            textArr = tweetText.split(' ')
+            for word in textArr:
+                if 'http' in word:
+                    textArr.remove(word)
+            newText = ' '.join(textArr)
+            item['text'] = newText
 
     def removeRepeats(self):
         repeatArray = np.array([])
-        cleanedJson = np.array([])
-        for item in self.json["data"]:
-            if ('RT @' not in item["text"]):
-            #if (('RT @' not in item["text"]) and (item["text"] not in repeatArray)):
+        myCopy = copy.copy(self.cleanedJson['data'])
+        for item in myCopy:
+            if ('rt @' in item['text']):
+                self.cleanedJson["data"].remove(item)
+            elif item['text'] in repeatArray:
+                self.cleanedJson["data"].remove(item)
+            else:
                 repeatArray = np.append(repeatArray, item["text"])
-                cleanedJson = np.append(cleanedJson, item)
-
-        self.cleanedJson = cleanedJson
 
     def removeStopWords(self):
-        for item in self.json["data"]:
-            print("hi")
+        nltk.download('stopwords')
+        stopWords = stopwords.words('english')
+        for item in self.cleanedJson["data"]:
+            tweetText = item['text']
+            textArr = tweetText.split(' ')
+            for word in textArr:
+                if word in stopWords:
+                    textArr.remove(word)
+            newText = ' '.join(textArr)
+            item['text'] = newText
+
+    def prepTweets(self):
+        self.lowerTweets()
+        self.removeLinks()
+        self.removeRepeats()
+        self.removeStopWords()
 
 
 
-json = TwitterAPICALL.callTwitter("Kanye Pete Davidson beef", 40)
+json = TwitterAPICALL.callTwitter("Kanye Pete Davidson beef", 20)
 g = tweetCleaner(json)
-g.removeRepeats()
-#print(g.cleanedJson)
-for item in g.cleanedJson:
-    print(item['text'])
 
-#g.removeStopWords()
+g.prepTweets()
+for item in g.cleanedJson['data']:
+    print(item['text'],"DONE")
 
-#like count, retweet count, comment count, follower count?
+
+print("done")

@@ -15,7 +15,7 @@ def urlGen(search, maxTweets = 10):
     query_params = {'query': search,
                     'max_results': maxTweets,
                     'next_token': {},
-                    'tweet.fields': 'organic_metrics'}
+                    'tweet.fields': 'public_metrics'}
     return url, query_params
 
 
