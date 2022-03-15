@@ -15,8 +15,7 @@ Instructions For Package Installation:
 Detailed Description of Demo File:
 ...
 
-Scope and Limitations: Human bias is the main source of limitation. This is because word's are classified as either positive or negative
-based off a human labeling these words as such. Another limitation is that NLTK is difficult to pick up on the complexity of sarcasm and irony.
+Scope and Limitations: 
 ...
 
 License and Terms of Use:
