@@ -18,7 +18,8 @@ class tweetCleaner():
         for item in self.cleanedJson['data']:
             tweetText = item['text']
             textArr = tweetText.split(' ')
-            for word in textArr:
+            textCopy = copy.copy(textArr)
+            for word in textCopy:
                 if 'http' in word:
                     textArr.remove(word)
             newText = ' '.join(textArr)
@@ -41,7 +42,8 @@ class tweetCleaner():
         for item in self.cleanedJson["data"]:
             tweetText = item['text']
             textArr = tweetText.split(' ')
-            for word in textArr:
+            copyText = copy.copy(textArr)
+            for word in copyText:
                 if word in stopWords:
                     textArr.remove(word)
             newText = ' '.join(textArr)
@@ -55,7 +57,7 @@ class tweetCleaner():
 
 
 
-json = TwitterAPICALL.callTwitter("Kanye Pete Davidson beef", 20)
+json = TwitterAPICALL.callTwitter("Kanye Pete Davidson beef", 100)
 g = tweetCleaner(json)
 
 g.prepTweets()
