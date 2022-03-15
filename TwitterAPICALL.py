@@ -15,7 +15,7 @@ def urlGen(search, maxTweets = 10):
     query_params = {'query': search,
                     'max_results': maxTweets,
                     'next_token': {},
-                    'tweet.fields': 'public_metrics'}
+                    'tweet.fields': 'organic_metrics'}
     return url, query_params
 
 
@@ -46,13 +46,16 @@ def callTwitter(search, max_results=20):
     return json_response
 
 
-jsonresponse = callTwitter("Kanye Pete Davidson beef", 40)
-HistDict = {}
-for item in jsonresponse["data"]:
-    if 'RT @' not in item["text"]:
-        HistDict[item["text"]] = 1
-        print(item["text"])
+#jsonresponse = callTwitter("Kanye Pete Davidson beef", 40)
+#HistDict = {}
+#for item in jsonresponse["data"]:
+#    if 'RT @' not in item["text"]:
+#        try:
+#            HistDict[item["text"][0:12]]
+#        except:
+#            HistDict[item["text"][0:12]] = 1
+#            print(item["text"])
         
-print("done")
+#print("done")
 #print(jsonresponse)
 #print(HistDict["hey"])
