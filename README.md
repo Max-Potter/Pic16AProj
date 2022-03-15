@@ -6,7 +6,7 @@ Group Members: Tyler Nguyen, Max Potter, Brandon Achugbue
 
 Short Description:
 Using the NLTK Sentiment Analyzer and the Twitter API, this project will collect and analyze
-user sentiments about various topics from their twitter posts. Data will be further processed
+user sentiments about various topics from their twitter posts and predict which tweets are more popular. Data will be further processed
 and analyzed using Scikit-learn to construct models and visualizations of these sentiments.
 
 Instructions For Package Installation:
