@@ -19,7 +19,7 @@ Detailed Description of Demo File:
 Scope and Limitations: There were a few limitations to our project. The first was that the NLTK sentiment analyzer is innately biased. This is because
 this model is a form of supervised learning, as the words are first classified into positive and negative sentiments by a human. For instance, some words may be 
 considered negative while other words may be considered positive. Additionally, because we used a term-document matrix in order to classify Tweets as either
-positive or negative, irony and sarcasm may be hard to pick up on. For these reasons, the sentiment score may not accurately reflect what the author of the tweet
+positive or negative, irony and sarcasm was hard to pick up on. For these reasons, the sentiment score may not accurately reflect what the author of the tweet
 truly meant as the tone was not picked up on. Finally, the last limitation was how fast tweets were collected from Twitter. Collecting tweets from Twitter via the API call
 took time, and additionally, most of these tweets had no likes, so it was difficult to find patterns in our data. 
 ...
