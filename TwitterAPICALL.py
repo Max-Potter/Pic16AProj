@@ -43,6 +43,8 @@ def accessEndpoint(url, headers, params, next_token = None):
     response = requests.request("GET", url, headers=headers, params=params)
     #print(os.environ.get("BEARER_TOKEN"))
     print("Response: " + str(response.status_code))
+    if str(response.status_code) == "429":
+        raise Exception("Error -- Twitter Rate Limit reached. Rate limit refreshes every 15 minutes, try again later.")
 
     return response.json()
 
@@ -59,8 +61,13 @@ def getPastSevenDays(search, max_results = 20):
     initJson = callTwitter(search, max_results, 0)
     for hourVal in range(0, 168, 2):
         newJson = callTwitter(search, max_results, hourVal)
-        for item in newJson['data']:
-            initJson['data'].append(item)
+        try:
+            for item in newJson['data']:
+                initJson['data'].append(item)
+        except KeyError:
+            raise KeyError("Error: Twitter API returned a bad request. You may have hit the rate limit, or sent a search query that returned no results.")
+        except:
+            raise Exception("Error: Something went wrong and the API request returned invalid data. Try a different search query.")
         #finalJson = updateJson
         #finalJson.update(callTwitter(search, max_results=max_results, hours_before = hourVal))
     return initJson

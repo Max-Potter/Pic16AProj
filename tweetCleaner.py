@@ -15,6 +15,7 @@ class tweetCleaner():
             item['text'] = item['text'].lower()
 
     def removeLinks(self):
+        endStop = r"\n"
         for item in self.cleanedJson['data']:
             tweetText = item['text']
             textArr = tweetText.split(' ')
@@ -23,6 +24,7 @@ class tweetCleaner():
                 if 'http' in word:
                     textArr.remove(word)
             newText = ' '.join(textArr)
+            newText = newText.replace(endStop, "")
             item['text'] = newText
 
     def removeRepeats(self):
@@ -58,16 +60,16 @@ class tweetCleaner():
 
 
 #json = TwitterAPICALL.callTwitter("Kanye Pete Davidson beef", 100)
-json = TwitterAPICALL.getPastSevenDays("Kanye Pete Davidson", 100)
+#json = TwitterAPICALL.getPastSevenDays("Kanye Pete Davidson", 100)
 #print(json)
-print(type(json))
-g = tweetCleaner(json)
+#print(type(json))
+#g = tweetCleaner(json)
 #for item in g.cleanedJson['data']:
   #  print(item['text'],"DONE")
-g.prepTweets()
-for item in g.cleanedJson['data']:
-    print(item['public_metrics'],"DONE")
-print(len(g.cleanedJson['data']))
+#g.prepTweets()
+#for item in g.cleanedJson['data']:
+##    print(item['public_metrics'],"DONE")
+#print(len(g.cleanedJson['data']))
 
 
-print("done")
+#print("done")
