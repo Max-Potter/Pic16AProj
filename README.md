@@ -8,7 +8,7 @@ Short Description:
 Using the NLTK Sentiment Analyzer and the Twitter API, this project will collect and analyze
 user sentiments about various topics from their twitter posts. From these tweets, we will predict which tweets are more popular. 
 Data will be further processed and analyzed using Scikit-learn to construct models and visualizations of these sentiments, and we will
-specifically use the Tree Decision Classifier and cross validation to accurately analyze our data.
+specifically used the Tree Decision Classifier and cross validation to accurately analyze our data.
 
 Instructions For Package Installation:
 ...
