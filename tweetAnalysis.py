@@ -13,6 +13,7 @@ from sklearn import tree
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import SGDRegressor
+from sklearn.linear_model import Lasso
 
 import json
 
@@ -46,22 +47,26 @@ def fit_SGDReg(X, y, test_size = 0.25):
     sgdr.fit(X_train,y_train)
     return sgdr, X_train, X_test, y_train, y_test
 
+def fit_lasso(X, y, test_size = 0.25):
+    lassoModel = Lasso()
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = test_size)
+    lassoModel.fit(X_train,y_train)
+    return lassoModel, X_train, X_test, y_train, y_test
 
 
+myjson = TwitterAPICALL.getPastSevenDays("Adventure Time", 100)
 
-#myjson = TwitterAPICALL.getPastSevenDays("Kanye Pete Davidson", 100)
-
-#k = tweetCleaner(myjson)
-#k.prepTweets()
+g = tweetCleaner(myjson)
+g.prepTweets()
 
 #with open('json_data.json', 'w') as outfile:
 #    json.dump(k.cleanedJson, outfile)
 
-with open('json_data.json') as json_file:
-    data = json.load(json_file)
+#with open('json_data.json') as json_file:
+ #   data = json.load(json_file)
 
-g = tweetCleaner(data)
-g.prepTweets()
+#g = tweetCleaner(data)
+#g.prepTweets()
 
 textList = []
 likeCounts = []
@@ -89,7 +94,7 @@ df['sentiment_score']=scores
 vec = CountVectorizer(stop_words = 'english')
 
 counts = vec.fit_transform(df['text'])
-count_df = pd.DataFrame(counts.toarray(), columns = vec.get_feature_names())
+count_df = pd.DataFrame(counts.toarray(), columns = vec.get_feature_names_out())
 df = pd.concat((df,count_df),axis=1)
 
 X = df.drop(['likeCounts','text'], axis=1)
@@ -103,10 +108,17 @@ print("END ----------- END")
 #best_fit_Tree(X,y)
 
 
-sgdr, X_train, X_test, y_train, y_test = fit_SGDReg(X,y)
-print(sgdr.score(X,y))
-print(sgdr.score(X_test,y_test))
-print(sgdr.score(X_train, y_train))
+#sgdr, X_train, X_test, y_train, y_test = fit_SGDReg(X,y)
+#print(sgdr.score(X,y))
+#print(sgdr.score(X_test,y_test))
+#print(sgdr.score(X_train, y_train))
+
+print("END ----------- END")
+
+lasso, X_train, X_test, y_train, y_test = fit_lasso(X,y)
+print(lasso.score(X,y))
+print(lasso.score(X_test,y_test))
+print(lasso.score(X_train, y_train))
 
 
 
