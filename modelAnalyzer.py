@@ -68,45 +68,8 @@ class modelAnalyzer():
         self.preppedData = preppedData
         return preppedData
 
-    def fit_tree(self, X, y, max_depth = 2, test_size = 0.25):
-        T = tree.DecisionTreeClassifier(max_depth = max_depth)
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = test_size)
-        T.fit(X_train,y_train)
-        return T, X_train, X_test, y_train, y_test
-
-    def best_fit_Tree(self, X, y):
-        best_score = -np.inf
-        scores = np.zeros(30)
-        for d in range(1,31):
-            T, X_train, X_test, y_train, y_test = self.fit_tree(X,y, max_depth = d)
-            #print(y_train)
-            with warnings.catch_warnings():
-                warnings.filterwarnings('ignore')
-                scores[d-1] = cross_val_score(T, X_train, y_train).mean()
-            if scores[d-1] > best_score:
-                best_score = scores[d-1]
-                best_depth = d
-        return best_depth
-
-    def fit_lasso(self, X, y, test_size = 0.25):
-        lassoModel = Lasso()
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = test_size)
-        lassoModel.fit(X_train,y_train)
-        return lassoModel, X_train, X_test, y_train, y_test
-
-    def fit_SGDReg(self, X, y, test_size = 0.25):
-        sgdr = SGDRegressor()
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = test_size)
-        sgdr.fit(X_train,y_train)
-        return sgdr, X_train, X_test, y_train, y_test
-
-    def fit_naiveBayes(self, inX,iny, test_size=0.25):
-        X = copy.copy(inX)
+    def categorizeLikes(self, iny):
         y = copy.copy(iny)
-        X=X.drop(labels = 'sentiment_score', axis=1)
-        #print(X)
-        termFreq_Transformer=TfidfTransformer()
-        X_termFreq = termFreq_Transformer.fit_transform(X)
         for index, val in y.iteritems():
             if val > 200:
                 y[index] = "Viral"
@@ -124,32 +87,106 @@ class modelAnalyzer():
                 y[index] = "Very Unpopular"
             else:
                 y[index] = "Extremely Unpopular"
+        return y
+
+    def fit_tree(self, X, iny, max_depth = 2, test_size = 0.25):
+        y = self.categorizeLikes(iny)
+        T = tree.DecisionTreeClassifier(max_depth = max_depth)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = test_size)
+        T.fit(X_train,y_train)
+        return T, X_train, X_test, y_train, y_test
+
+    def best_fit_Tree(self, X, iny, max_tree_depth = 30):
+        best_score = -np.inf
+        scores = np.zeros(30)
+        y = copy.copy(iny)
+        fig, ax = plt.subplots(1, figsize = (10,10))
+        #y = self.categorizeLikes(iny)
+        plotX = []
+        plotY = []
+        ax.set(xlabel = "Depth", ylabel = "Score", title = "Best Decision Tree Depth")
+        for d in range(1,max_tree_depth + 1):
+            T, X_train, X_test, y_train, y_test = self.fit_tree(X,y, max_depth = d)
+            #print(y_train)
+            with warnings.catch_warnings():
+                warnings.filterwarnings('ignore')
+                scores[d-1] = cross_val_score(T, X_train, y_train).mean()
+            if scores[d-1] > best_score:
+                best_score = scores[d-1]
+                best_depth = d
+            plotX.append(d)
+            plotY.append(scores[d-1])
+        ax.plot(plotX,plotY)
+        return best_depth, fig
+
+    def fit_lasso(self, X, y, test_size = 0.25):
+        lassoModel = Lasso()
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = test_size)
+        lassoModel.fit(X_train,y_train)
+        return lassoModel, X_train, X_test, y_train, y_test
+
+    def fit_SGDReg(self, X, y, test_size = 0.25):
+        sgdr = SGDRegressor()
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = test_size)
+        sgdr.fit(X_train,y_train)
+        return sgdr, X_train, X_test, y_train, y_test
+
+    def fit_naiveBayes(self, inX,iny, test_size=0.25):
+        X = copy.copy(inX)
+        y = self.categorizeLikes(iny)
+        X=X.drop(labels = 'sentiment_score', axis=1)
+        #print(X)
+        termFreq_Transformer=TfidfTransformer()
+        X_termFreq = termFreq_Transformer.fit_transform(X)
         X_train, X_test, y_train, y_test = train_test_split(X_termFreq, y, test_size = test_size)
         bayesModel = MultinomialNB().fit(X_train,y_train)
         return bayesModel, X_train, X_test, y_train, y_test
 
-    def fitAllData(self, minLikes = 0):
+    def fitAllData(self, minLikes = 0, max_tree_depth = 30):
         allData = self.prepData(minLikes = minLikes)
-        for dataSet in allData:
+        xTicks = np.arange(len(allData))
+        width = 0.3
+        fig, ax = plt.subplots()
+        ax.set(ylabel = 'Scores', title="Best Model for Dataset")
+        nameList = []
+        for count, dataSet in enumerate(allData):
             name = dataSet[0]
+            nameList.append(name)
             X = dataSet[1]
             y = dataSet[2]
-            bestTreeDepth = self.best_fit_Tree(X,y)
+            bestTreeDepth, tempFig = self.best_fit_Tree(X,y, max_tree_depth = max_tree_depth)
+            plt.close(tempFig)
             T, X_train, X_test, y_train, y_test = self.fit_tree(X, y, max_depth = bestTreeDepth)
             print("Scores for dataset " + str(name))
             print(" --------- ")
+            print("Best Depth for Decision Tree: " + str(bestTreeDepth))
             print("Decision Tree Score on Training Data: " + str(T.score(X_train,y_train)))
             print("Decision Tree Score on Test Data: " + str(T.score(X_test,y_test)))
+            ax.bar(count - width, T.score(X_test,y_test), width, color = "green")
             print(" --------- ")
             lasso, X_train, X_test, y_train, y_test = self.fit_lasso(X,y)
             print("Lasso Score on Training Data: " + str(lasso.score(X_train,y_train)))
             print("Lasso Score on Test Data: " + str(lasso.score(X_test,y_test)))
+            ax.bar(count, lasso.score(X_test,y_test), width, color = "blue")
             print(" --------- ")
             bayesModel, X_train, X_test, y_train, y_test = self.fit_naiveBayes(X,y)
-            print("Baye's Model Score on Training Data: " + str(bayesModel.score(X_train,y_train)))
-            print("Baye's Model Score on Test Data: " + str(bayesModel.score(X_test,y_test)))
+            print("Bayes Model Score on Training Data: " + str(bayesModel.score(X_train,y_train)))
+            print("Bayes Model Score on Test Data: " + str(bayesModel.score(X_test,y_test)))
+            ax.bar(count + width, bayesModel.score(X_test,y_test), width, color = "orange")
             print(" /////////////// ")
+        ax.set_xticks(xTicks, nameList)
+        plt.axhline(y = 0.0, color = 'red', linestyle = "-")
+        ax.legend(labels = ["X-axis","Decision Tree", "Lasso", "Bayes Model"])
+        fig.tight_layout()
+        return fig
+
            
+    def getAllData(self, minLikes = 0):
+        allData = self.prepData(minLikes = minLikes)
+        dataDict = {}
+        for dataSet in allData:
+            dataDict[dataSet[0]] = (dataSet[1],dataSet[2])
+        return dataDict
 
 
 
