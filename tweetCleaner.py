@@ -10,6 +10,7 @@ class tweetCleaner():
         self.json = jsonObj
         self.cleanedJson = copy.copy(jsonObj)
 
+
     def lowerTweets(self):
         for item in self.cleanedJson['data']:
             item['text'] = item['text'].lower()
@@ -56,6 +57,8 @@ class tweetCleaner():
         self.removeLinks()
         self.removeRepeats()
         self.removeStopWords()
+
+
 
 
 

@@ -16,6 +16,7 @@ from sklearn.linear_model import SGDRegressor
 from sklearn.linear_model import Lasso
 import json
 import modelAnalyzer
+from modelAnalyzer import modelAnalyzer
 
 def fit_tree(X, y, max_depth = 2, test_size = 0.25):
     T = tree.DecisionTreeClassifier(max_depth = max_depth)
@@ -53,84 +54,27 @@ def fit_lasso(X, y, test_size = 0.25):
     lassoModel.fit(X_train,y_train)
     return lassoModel, X_train, X_test, y_train, y_test
 
-
-myjson = TwitterAPICALL.getPastSevenDays("Bob Ross", 100)
-
-g = tweetCleaner(myjson)
-g.prepTweets()
-
-#with open('json_data.json', 'w') as outfile:
-#    json.dump(k.cleanedJson, outfile)
-
-#with open('json_data.json') as json_file:
- #   data = json.load(json_file)
-
-#g = tweetCleaner(data)
+####
+#myjson = TwitterAPICALL.getPastSevenDays("Bob Ross", 100)
+#g = tweetCleaner(myjson)
 #g.prepTweets()
 
-textList = []
-likeCounts = []
+#modelAnalysis = modelAnalyzer([])
+#modelAnalysis.addJson(g.cleanedJson, "Bob_RossLikes")
 
-for item in g.cleanedJson['data']:
-    textList.append(item['text'])
-    likeCounts.append(item['public_metrics']['like_count'])
+#myjson = TwitterAPICALL.getPastSevenDays("Kanye Pete Davidson", 100)
 
-data = {'text': textList, 'likeCounts': likeCounts}
-df = pd.DataFrame(data)
+#g = tweetCleaner(myjson)
+#g.prepTweets()
+#modelAnalysis.addJson(g.cleanedJson, "Kanye_PeteLikes")
 
-nltk.download('punkt')
-nltk.download('vader_lexicon')
+#myjson = TwitterAPICALL.getPastSevenDays("Ukraine Russia", 100)
 
-tweets = df['text']
-sid = SentimentIntensityAnalyzer()
+#g = tweetCleaner(myjson)
+#g.prepTweets()
+#modelAnalysis.addJson(g.cleanedJson, "Ukraine_RussiaLikes")
+####
 
-scores = []
-for tweet in tweets:
-    score = sid.polarity_scores(tweet)
-    scores.append(score['compound'])
+modelAnalysis = modelAnalyzer(['Bob_Ross.json','Kanye_Pete.json','Ukraine_Russia.json'])
+modelAnalysis.fitAllData(minLikes = 10)
 
-df['sentiment_score']=scores
-
-vec = CountVectorizer(stop_words = 'english')
-
-counts = vec.fit_transform(df['text'])
-count_df = pd.DataFrame(counts.toarray(), columns = vec.get_feature_names_out())
-df = pd.concat((df,count_df),axis=1)
-
-X = df.drop(['likeCounts','text'], axis=1)
-y = df['likeCounts']
-
-T, X_train, X_test, y_train, y_test = fit_tree(X, y, max_depth = 8)
-print(T.score(X,y))
-print(T.score(X_test,y_test))
-print(T.score(X_train, y_train))
-print("END ----------- END")
-#best_fit_Tree(X,y)
-
-
-#sgdr, X_train, X_test, y_train, y_test = fit_SGDReg(X,y)
-#print(sgdr.score(X,y))
-#print(sgdr.score(X_test,y_test))
-#print(sgdr.score(X_train, y_train))
-
-print("END ----------- END")
-
-lasso, X_train, X_test, y_train, y_test = fit_lasso(X,y)
-print(lasso.score(X,y))
-print(lasso.score(X_test,y_test))
-print(lasso.score(X_train, y_train))
-
-
-
-
-# numTweetsWithWord = {"best" : 5, "worst" : 7}
-# wordMatrixx -->    
-
-#   (CurrentAvg * numTweetsWithThatWord (doesn't include currentTweet) )) + CurrentTweetsLikeCount
-#    ----------------------------------------------------------
-#               numTweetsWithThatWord + 1
-
-
-
-# same matrix, we take every word it has a '1' or a '0' for each tweet as a row
-# in each row of that same dataframe, we want an extra column that is the like count
