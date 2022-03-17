@@ -14,8 +14,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import SGDRegressor
 from sklearn.linear_model import Lasso
-
 import json
+import modelAnalyzer
 
 def fit_tree(X, y, max_depth = 2, test_size = 0.25):
     T = tree.DecisionTreeClassifier(max_depth = max_depth)
@@ -54,7 +54,7 @@ def fit_lasso(X, y, test_size = 0.25):
     return lassoModel, X_train, X_test, y_train, y_test
 
 
-myjson = TwitterAPICALL.getPastSevenDays("Adventure Time", 100)
+myjson = TwitterAPICALL.getPastSevenDays("Bob Ross", 100)
 
 g = tweetCleaner(myjson)
 g.prepTweets()
