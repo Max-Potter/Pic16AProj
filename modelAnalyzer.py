@@ -28,20 +28,23 @@ class modelAnalyzer():
             fileName = fileName + ".json"
         if fileName not in self.jsonList:
             self.jsonList.append(fileName)
-            return 1, fileName
-        return 0, "NULL"
+        return fileName
 
     def addJson(self,newJson, fileName):
-        success, newName = self.updateJsonList(fileName)
-        if success:
-            with open(newName, 'w') as outfile:
-                json.dump(newJson, outfile)
-                print("Successfully added " + newName + " to modelAnalyzer")
+        newName = self.updateJsonList(fileName)
+        with open(newName, 'w') as outfile:
+            json.dump(newJson, outfile)
+            print("Successfully added " + newName + " to modelAnalyzer")
             
 
     def getAllJsons(self):
         allJsons = {}
         for jsonName in self.jsonList:
+            try:
+                f = open(jsonName)
+                f.close()
+            except:
+                raise Exception("ERROR -- " + str(jsonName) + " does not exist. Please add this file to the current directory.")
             with open(jsonName) as json_file:
                 currJson = json.load(json_file)
             allJsons[jsonName] = currJson
