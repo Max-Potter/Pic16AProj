@@ -23,7 +23,6 @@ import copy
 #using NLTK sentiment analysis values and the 'bag of words' count_vectorizer from scikit as predictor variables,
 #and the number of likes on the tweet as the target variable.
 #These 4 models are: Decision Trees, Lasso Models, SGDR Models, and MultinomialNB models
-#
 #modelAnalyzer must be initialized with a list 'jsonList' of all jsons we want to load,
 #although this list can be empty and later updated using updateJsonList() and addJson()
 #Member variables:
@@ -36,12 +35,13 @@ class modelAnalyzer():
     #@params
     #jsonList: A list of strings, where each string is the name of a json object to be loaded. Can be empty.
     def __init__(self,jsonList):
-        nltk.download('punkt')
-        nltk.download('vader_lexicon')
+        nltk.download('vader_lexicon')      #vader is a model for text sentiment analysis that's sensitive to both 
+        nltk.download('punkt')              #polarity (positive/negative) and intensity of emotion and can understand 
+                                            #the basic context of these words
         self.jsonList = jsonList
         self.preppedData = self.prepData()
 
-
+        
     #Updates the jsonList to include indicated filename. 
     #Appends .json to the filename if not provided.
     #@params
