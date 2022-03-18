@@ -23,12 +23,21 @@ class modelAnalyzer():
         self.jsonList = jsonList
         self.prepData()
 
-    def addJson(self,newJson, fileName):
+    def updateJsonList(self, fileName):
         if len(fileName) < 5 or fileName[-5:] != ".json":
             fileName = fileName + ".json"
-        self.jsonList.append(fileName)
-        with open(fileName, 'w') as outfile:
-            json.dump(newJson, outfile)
+        if fileName not in self.jsonList:
+            self.jsonList.append(fileName)
+            return 1, fileName
+        return 0, "NULL"
+
+    def addJson(self,newJson, fileName):
+        success, newName = self.updateJsonList(fileName)
+        if success:
+            with open(newName, 'w') as outfile:
+                json.dump(newJson, outfile)
+                print("Successfully added " + newName + " to modelAnalyzer")
+            
 
     def getAllJsons(self):
         allJsons = {}
@@ -60,7 +69,10 @@ class modelAnalyzer():
             df['sentiment_score']=scores
             vec = CountVectorizer(stop_words = 'english')
             counts = vec.fit_transform(df['text'])
-            count_df = pd.DataFrame(counts.toarray(),columns = vec.get_feature_names_out())
+            try:
+                count_df = pd.DataFrame(counts.toarray(),columns = vec.get_feature_names_out())
+            except:
+                count_df = pd.DataFrame(counts.toarray(),columns = vec.get_feature_names())
             df = pd.concat((df,count_df),axis=1)
             X = df.drop(['likeCounts','text'],axis=1)
             y = df['likeCounts']
@@ -160,21 +172,39 @@ class modelAnalyzer():
             print("Scores for dataset " + str(name))
             print(" --------- ")
             print("Best Depth for Decision Tree: " + str(bestTreeDepth))
-            print("Decision Tree Score on Training Data: " + str(T.score(X_train,y_train)))
-            print("Decision Tree Score on Test Data: " + str(T.score(X_test,y_test)))
-            ax.bar(count - width, T.score(X_test,y_test), width, color = "green")
+            trainScore = T.score(X_train,y_train)
+            testScore = T.score(X_test,y_test)
+            print("Decision Tree Score on Training Data: " + str(trainScore))
+            print("Decision Tree Score on Test Data: " + str(testScore))
+            if testScore < -1:
+                print("Adjusting for plot, score too negative")
+                testScore = -1
+            ax.bar(count - width, testScore, width, color = "green")
             print(" --------- ")
             lasso, X_train, X_test, y_train, y_test = self.fit_lasso(X,y)
-            print("Lasso Score on Training Data: " + str(lasso.score(X_train,y_train)))
-            print("Lasso Score on Test Data: " + str(lasso.score(X_test,y_test)))
-            ax.bar(count, lasso.score(X_test,y_test), width, color = "blue")
+            trainScore = lasso.score(X_train,y_train)
+            testScore = lasso.score(X_test,y_test)
+            print("Lasso Score on Training Data: " + str(trainScore))
+            print("Lasso Score on Test Data: " + str(testScore))
+            if testScore < -1:
+                print("Adjusting for plot, score too negative")
+                testScore = -1
+            ax.bar(count, testScore, width, color = "blue")
             print(" --------- ")
             bayesModel, X_train, X_test, y_train, y_test = self.fit_naiveBayes(X,y)
-            print("Bayes Model Score on Training Data: " + str(bayesModel.score(X_train,y_train)))
-            print("Bayes Model Score on Test Data: " + str(bayesModel.score(X_test,y_test)))
-            ax.bar(count + width, bayesModel.score(X_test,y_test), width, color = "orange")
+            trainScore = bayesModel.score(X_train,y_train)
+            testScore = bayesModel.score(X_test,y_test)
+            print("Bayes Model Score on Training Data: " + str(trainScore))
+            print("Bayes Model Score on Test Data: " + str(testScore))
+            if testScore < -1:
+                print("Adjusting for plot, score too negative")
+                testScore = -1
+            ax.bar(count + width, testScore, width, color = "orange")
             print(" /////////////// ")
-        ax.set_xticks(xTicks, nameList)
+        try:
+            ax.set_xticks(xTicks, nameList)
+        except:
+            print("Warning: You are using an older version of MatPlotLib. Please upgrade to version 3.5 or newer to ensure proper display of graphs. Bar Graphs may not display categories properly otherwise.")
         plt.axhline(y = 0.0, color = 'red', linestyle = "-")
         ax.legend(labels = ["X-axis","Decision Tree", "Lasso", "Bayes Model"])
         fig.tight_layout()

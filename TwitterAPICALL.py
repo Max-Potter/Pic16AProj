@@ -34,7 +34,7 @@ def requestHeaders(token):
 def accessEndpoint(url, headers, params, next_token = None):
     params['next_token'] = next_token
     response = requests.request("GET", url, headers=headers, params=params)
-    print("Response: " + str(response.status_code))
+    #print("Response: " + str(response.status_code))
     if str(response.status_code) == "429":
         raise Exception("Error -- Twitter Rate Limit reached. Rate limit refreshes every 15 minutes, try again later.")
 
@@ -48,6 +48,7 @@ def callTwitter(search, max_results=20, hours_before = 0):
     return json_response
 
 def getPastSevenDays(search, max_results = 20):
+    print("Beginning Tweet Retrieval - This may take up to a few minutes depending on volume")
     initJson = callTwitter(search, max_results, 0)
     for hourVal in range(0, 168, 2):
         newJson = callTwitter(search, max_results, hourVal)
@@ -60,5 +61,6 @@ def getPastSevenDays(search, max_results = 20):
             raise Exception("Error: Something went wrong and the API request returned invalid data. Try a different search query.")
         #finalJson = updateJson
         #finalJson.update(callTwitter(search, max_results=max_results, hours_before = hourVal))
+    print("Retrieved all tweets with no issues")
     return initJson
 
