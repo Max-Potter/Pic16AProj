@@ -8,7 +8,7 @@ Short Description:
 Using the NLTK Sentiment Analyzer and the Twitter API, this project will collect and analyze
 user sentiments about various topics from their twitter posts. From these tweets, we will predict which tweets are more popular. 
 Data will be further processed and analyzed using Scikit-learn to construct models and visualizations of these sentiments, and we specifically used 
-the Decision Tree Classifier, Lasso models, and Naive Bayes models. 
+the Decision Tree Classifier, lasso models, and Naive Bayes models. 
 
 Instructions For Package Installation:
 Packages in the file requirements.txt should be installed to your IDE or device as normal.
